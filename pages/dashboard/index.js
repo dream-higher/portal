@@ -31,9 +31,9 @@ export default function Protected({ user }) {
 			<body class="h-full overflow-hidden">
 			```
 		*/}
-			<div className='h-full min-h-screen flex'>
+			<div className='flex h-full min-h-screen'>
 				<Transition.Root show={sidebarOpen} as={Fragment}>
-					<Dialog as='div' className='fixed inset-0 flex z-40 lg:hidden' onClose={setSidebarOpen}>
+					<Dialog as='div' className='fixed inset-0 z-40 flex lg:hidden' onClose={setSidebarOpen}>
 						<Transition.Child
 							as={Fragment}
 							enter='transition-opacity ease-linear duration-300'
@@ -54,7 +54,7 @@ export default function Protected({ user }) {
 							leaveFrom='translate-x-0'
 							leaveTo='-translate-x-full'
 						>
-							<div className='relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none'>
+							<div className='relative flex flex-col flex-1 w-full max-w-xs bg-white focus:outline-none'>
 								<Transition.Child
 									as={Fragment}
 									enter='ease-in-out duration-300'
@@ -64,20 +64,25 @@ export default function Protected({ user }) {
 									leaveFrom='opacity-100'
 									leaveTo='opacity-0'
 								>
-									<div className='absolute top-0 right-0 -mr-12 pt-2'>
+									<div className='absolute top-0 right-0 pt-2 -mr-12'>
 										<button
 											type='button'
-											className='ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'
+											className='flex items-center justify-center w-10 h-10 ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'
 											onClick={() => setSidebarOpen(false)}
 										>
 											<span className='sr-only'>Close sidebar</span>
-											<XIcon className='h-6 w-6 text-white' aria-hidden='true' />
+											<XIcon className='w-6 h-6 text-white' aria-hidden='true' />
 										</button>
 									</div>
 								</Transition.Child>
 								<div className='flex-1 h-0 pt-5 pb-4 overflow-y-auto'>
-									<div className='flex-shrink-0 flex items-center px-4'>
-										<Image layout={'fill'} className='h-8 w-auto' src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg' alt='Workflow' />
+									<div className='flex items-center flex-shrink-0 px-4'>
+										<Image
+											layout={'fill'}
+											className='w-auto h-8'
+											src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg'
+											alt='Workflow'
+										/>
 									</div>
 									<nav aria-label='Sidebar' className='mt-5'>
 										<div className='px-2 space-y-1'>
@@ -90,20 +95,23 @@ export default function Protected({ user }) {
 														'group flex items-center px-2 py-2 text-base font-medium rounded-md'
 													)}
 												>
-													<item.icon className={classNames(item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-4 h-6 w-6')} aria-hidden='true' />
+													<item.icon
+														className={classNames(item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-4 h-6 w-6')}
+														aria-hidden='true'
+													/>
 													{item.name}
 												</a>
 											))}
 										</div>
 									</nav>
 								</div>
-								<div className='flex-shrink-0 flex border-t border-gray-200 p-4'>
-									<a href='#' className='flex-shrink-0 group block'>
+								<div className='flex flex-shrink-0 p-4 border-t border-gray-200'>
+									<a href='#' className='flex-shrink-0 block group'>
 										<div className='flex items-center'>
 											<div>
 												<Image
 													layout={'fill'}
-													className='inline-block h-10 w-10 rounded-full'
+													className='inline-block w-10 h-10 rounded-full'
 													src='https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80'
 													alt=''
 												/>
@@ -127,12 +135,18 @@ export default function Protected({ user }) {
 				<div className='hidden lg:flex lg:flex-shrink-0'>
 					<div className='flex flex-col w-64'>
 						{/* Sidebar component, swap this element with another sidebar if you like */}
-						<div className='flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-100'>
-							<div className='flex-1 flex flex-col pt-5 pb-4 overflow-y-auto'>
+						<div className='flex flex-col flex-1 min-h-0 bg-gray-100 border-r border-gray-200'>
+							<div className='flex flex-col flex-1 pt-5 pb-4 overflow-y-auto'>
 								<div className='flex items-center flex-shrink-0 px-4'>
-									<Image width={200} height={50} className='h-8 w-auto' src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg' alt='Workflow' />
+									<Image
+										width={200}
+										height={50}
+										className='w-auto h-8'
+										src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg'
+										alt='Workflow'
+									/>
 								</div>
-								<nav className='mt-5 flex-1' aria-label='Sidebar'>
+								<nav className='flex-1 mt-5' aria-label='Sidebar'>
 									<div className='px-2 space-y-1'>
 										{navigation.map((item) => (
 											<a
@@ -143,18 +157,21 @@ export default function Protected({ user }) {
 													'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
 												)}
 											>
-												<item.icon className={classNames(item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6')} aria-hidden='true' />
+												<item.icon
+													className={classNames(item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6')}
+													aria-hidden='true'
+												/>
 												{item.name}
 											</a>
 										))}
 									</div>
 								</nav>
 							</div>
-							<div className='flex-shrink-0 flex border-t border-gray-200 p-4'>
-								<a href='#' className='flex-shrink-0 w-full group block'>
+							<div className='flex flex-shrink-0 p-4 border-t border-gray-200'>
+								<a href='#' className='flex-shrink-0 block w-full group'>
 									<div className='flex items-center'>
 										<div>
-											<Image width={50} height={50} className='inline-block h-9 w-9 rounded-full' src={user.user_metadata.avatar_url} alt='' />
+											<Image width={50} height={50} className='inline-block rounded-full h-9 w-9' src={user.user_metadata.avatar_url} alt='' />
 										</div>
 										<div className='ml-3 -mt-1'>
 											<p className='text-sm font-medium text-gray-700 group-hover:text-gray-900'>{user.user_metadata.full_name}</p>
@@ -166,35 +183,35 @@ export default function Protected({ user }) {
 						</div>
 					</div>
 				</div>
-				<div className='flex flex-col min-w-0 flex-1 overflow-hidden'>
+				<div className='flex flex-col flex-1 min-w-0 overflow-hidden'>
 					<div className='lg:hidden'>
 						<div className='flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5'>
 							<div>
-								<Image layout={'fill'} className='h-8 w-auto' src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg' alt='Workflow' />
+								<Image layout={'fill'} className='w-auto h-8' src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg' alt='Workflow' />
 							</div>
 							<div>
 								<button
 									type='button'
-									className='-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900'
+									className='inline-flex items-center justify-center w-12 h-12 -mr-3 text-gray-500 rounded-md hover:text-gray-900'
 									onClick={() => setSidebarOpen(true)}
 								>
 									<span className='sr-only'>Open sidebar</span>
-									<MenuIcon className='h-6 w-6' aria-hidden='true' />
+									<MenuIcon className='w-6 h-6' aria-hidden='true' />
 								</button>
 							</div>
 						</div>
 					</div>
-					<div className='flex-1 relative z-0 flex overflow-hidden'>
-						<main className='flex-1 relative z-0 overflow-y-auto focus:outline-none'>
+					<div className='relative z-0 flex flex-1 overflow-hidden'>
+						<main className='relative z-0 flex-1 overflow-y-auto focus:outline-none'>
 							{/* Start main area*/}
-							<div className='absolute inset-0 py-6 px-4 sm:px-6 lg:px-8'>
+							<div className='absolute inset-0 px-4 py-6 sm:px-6 lg:px-8'>
 								<div className='h-full border-2 border-gray-200 border-dashed rounded-lg' />
 							</div>
 							{/* End main area */}
 						</main>
-						<aside className='hidden relative xl:flex xl:flex-col flex-shrink-0 w-96 border-l border-gray-200 overflow-y-auto'>
+						<aside className='relative flex-shrink-0 hidden overflow-y-auto border-l border-gray-200 xl:flex xl:flex-col w-96'>
 							{/* Start secondary column (hidden on smaller screens) */}
-							<div className='absolute inset-0 py-6 px-4 sm:px-6 lg:px-8'>
+							<div className='absolute inset-0 px-4 py-6 sm:px-6 lg:px-8'>
 								<div className='h-full border-2 border-gray-200 border-dashed rounded-lg' />
 							</div>
 							{/* End secondary column */}
