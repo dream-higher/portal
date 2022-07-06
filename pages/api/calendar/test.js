@@ -10,7 +10,8 @@ export default async function handler(req, res) {
 		const filePath = path.join(process.cwd(), 'credentials/google-api.json')
 		const jsonData = await fsPromises.readFile(filePath)
 		const objectData = JSON.parse(jsonData)
-
+    // End read JSON
+    
 		res.status(200).send({data: objectData})
 	}
 }
