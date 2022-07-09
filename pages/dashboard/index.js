@@ -1,36 +1,55 @@
+import { Fragment, useState, useEffect } from 'react'
 import supabaseClient from '@utils/client'
-import Image from 'next/image'
 
-import { Fragment, useState } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+
 import { Dialog, Transition } from '@headlessui/react'
 import { CalendarIcon, HomeIcon, MapIcon, MenuIcon, SearchCircleIcon, SpeakerphoneIcon, UserGroupIcon, XIcon } from '@heroicons/react/outline'
 
 const navigation = [
 	{ name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
 	{ name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-	{ name: 'Teams', href: '#', icon: UserGroupIcon, current: false },
-	{ name: 'Directory', href: '#', icon: SearchCircleIcon, current: false },
-	{ name: 'Announcements', href: '#', icon: SpeakerphoneIcon, current: false },
-	{ name: 'Office Map', href: '#', icon: MapIcon, current: false },
+	{ name: 'Members', href: '#', icon: UserGroupIcon, current: false },
+	// { name: 'Directory', href: '#', icon: SearchCircleIcon, current: false },
+	// { name: 'Announcements', href: '#', icon: SpeakerphoneIcon, current: false },
+	// { name: 'Office Map', href: '#', icon: MapIcon, current: false },
 ]
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ')
 }
 
-export default function Protected({ user }) {
+export default function Dashboard({ user }) {
+	const router = useRouter()
+
 	const [sidebarOpen, setSidebarOpen] = useState(false)
+
+	console.log(user)
+
+	useEffect(() => {
+		const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
+			fetch('/api/auth', {
+				method: 'POST',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				credentials: 'same-origin',
+				body: JSON.stringify({ event, session }),
+			}).then((res) => res.json())
+		})
+
+		return () => {
+			authListener.unsubscribe()
+		}
+	}, [])
+
+	async function signOut() {
+		await supabaseClient.auth.signOut()
+		console.log('Signing out')
+		router.push('/')
+	}
 
 	return (
 		<>
-			{/*
-			This example requires updating your template:
-
-			```
-			<html class="h-full bg-white">
-			<body class="h-full overflow-hidden">
-			```
-		*/}
 			<div className='flex h-full min-h-screen'>
 				<Transition.Root show={sidebarOpen} as={Fragment}>
 					<Dialog as='div' className='fixed inset-0 z-40 flex lg:hidden' onClose={setSidebarOpen}>
@@ -78,7 +97,8 @@ export default function Protected({ user }) {
 								<div className='flex-1 h-0 pt-5 pb-4 overflow-y-auto'>
 									<div className='flex items-center flex-shrink-0 px-4'>
 										<Image
-											layout={'fill'}
+											width={200}
+											height={100}
 											className='w-auto h-8'
 											src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg'
 											alt='Workflow'
@@ -110,7 +130,8 @@ export default function Protected({ user }) {
 										<div className='flex items-center'>
 											<div>
 												<Image
-													layout={'fill'}
+													width={50}
+													height={50}
 													className='inline-block w-10 h-10 rounded-full'
 													src='https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80'
 													alt=''
@@ -118,7 +139,9 @@ export default function Protected({ user }) {
 											</div>
 											<div className='ml-3'>
 												<p className='text-base font-medium text-gray-700 group-hover:text-gray-900'>{user.user_metadata.full_name}</p>
-												<p className='text-sm font-medium text-gray-500 group-hover:text-gray-700'>View profile</p>
+												<p className='text-sm font-medium text-red-500 group-hover:text-red-700' onClick={signOut}>
+													Sign out
+												</p>
 											</div>
 										</div>
 									</a>
@@ -175,7 +198,9 @@ export default function Protected({ user }) {
 										</div>
 										<div className='ml-3 -mt-1'>
 											<p className='text-sm font-medium text-gray-700 group-hover:text-gray-900'>{user.user_metadata.full_name}</p>
-											<p className='text-xs font-medium text-gray-500 group-hover:text-gray-700'>View profile</p>
+											<p className='text-xs font-medium text-red-500 group-hover:text-red-700' onClick={signOut}>
+												Sign out
+											</p>
 										</div>
 									</div>
 								</a>
@@ -187,7 +212,7 @@ export default function Protected({ user }) {
 					<div className='lg:hidden'>
 						<div className='flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5'>
 							<div>
-								<Image layout={'fill'} className='w-auto h-8' src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg' alt='Workflow' />
+								<Image width={50} height={30} className='w-auto h-8' src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg' alt='Workflow' />
 							</div>
 							<div>
 								<button
@@ -222,6 +247,7 @@ export default function Protected({ user }) {
 		</>
 	)
 }
+
 export async function getServerSideProps({ req }) {
 	const { user } = await supabaseClient.auth.api.getUserByCookie(req)
 	if (!user) {
@@ -232,6 +258,5 @@ export async function getServerSideProps({ req }) {
 			},
 		}
 	}
-
 	return { props: { user } }
 }

@@ -6,12 +6,12 @@ export default async function handler(req, res) {
 		// Process a POST request
 		console.log('POST request received.')
 	} else {
-    // Read JSON for authentication
+		// Read JSON for authentication
 		const filePath = path.join(process.cwd(), 'credentials/google-api.json')
 		const jsonData = await fsPromises.readFile(filePath)
 		const objectData = JSON.parse(jsonData)
-    // End read JSON
-    
-		res.status(200).send({data: objectData})
+		// End read JSON
+
+		res.status(200).send({ data: objectData })
 	}
 }

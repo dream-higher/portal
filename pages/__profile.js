@@ -5,9 +5,11 @@ import { useRouter } from 'next/router'
 export default function Profile() {
 	const [profile, setProfile] = useState(null)
 	const router = useRouter()
+
 	useEffect(() => {
 		fetchProfile()
 	}, [])
+
 	async function update() {
 		const { user, error } = await supabase.auth.update({
 			data: {
@@ -16,6 +18,7 @@ export default function Profile() {
 		})
 		console.log('user:', user)
 	}
+	
 	async function fetchProfile() {
 		const profileData = await supabase.auth.user()
 		console.log('profileData: ', profileData)

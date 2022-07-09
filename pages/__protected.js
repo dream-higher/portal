@@ -1,13 +1,15 @@
-import supabaseClient from '../utils/client'
+import supabaseClient from '@utils/client'
 import Image from 'next/image'
 
 export default function Protected({ user }) {
 	return (
-		<>
-			<h1>Hello, {user.user_metadata.full_name}!</h1>
-			<p> Your email : {user.email}</p>
-			<Image className={'rounded-full'} src={user.user_metadata.avatar_url} width='200' height='200' alt={'User avatar'} />
-		</>
+		<div className={'flex items-center justify-center'}>
+			<div>
+				<h1>Hello, {user.user_metadata.full_name}!</h1>
+				<p>Your email : {user.email}</p>
+				<Image className={'rounded-full'} src={user.user_metadata.avatar_url} width='200' height='200' alt={'User avatar'} />
+			</div>
+		</div>
 	)
 }
 export async function getServerSideProps({ req }) {

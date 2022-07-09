@@ -1,10 +1,11 @@
-import { Auth, Button } from '@supabase/ui'
-import supabaseClient from '@utils/client'
-import Container from '@components/Container'
 import { useEffect } from 'react'
+import { Auth } from '@supabase/ui'
+import supabaseClient from '@utils/client'
 import signIn from '@utils/signIn'
 
 export default function Home() {
+	const { user } = Auth.useUser()
+
 	useEffect(() => {
 		const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
 			fetch('/api/auth', {
@@ -18,14 +19,16 @@ export default function Home() {
 		return () => {
 			authListener.unsubscribe()
 		}
-	}, [])
+	}, [user])
+
+	console.log(user)
 
 	return (
-		<div>
+		<div className={'flex items-center justify-center absolute top-0 left-0 w-full h-full'}>
 			<Auth.UserContextProvider supabaseClient={supabaseClient}>
-				<Container supabaseClient={supabaseClient}>
-					<Button onClick={() => signIn(supabaseClient)}>Log in</Button>
-				</Container>
+				<button className={'px-5 py-2 font-bold text-black hover:bg-green-500 bg-green-400'} onClick={() => signIn(supabaseClient)}>
+					Log in
+				</button>
 			</Auth.UserContextProvider>
 		</div>
 	)
