@@ -23,7 +23,7 @@ const Container = (props) => {
 export default function Home() {
 	return (
 		<div className={'absolute top-0 left-0 w-full h-full flex items-center justify-center'}>
-			<div className={'w-1/2 h-1/2 flex items-center justify-center flex-col text-center'}>
+			<div className={'w-full h-full max-w-xs flex items-center justify-center flex-col text-center'}>
 				<Auth.UserContextProvider supabaseClient={supabaseClient}>
 					<Container supabaseClient={supabaseClient}>
 						<Auth onlyThirdPartyProviders providers={['google']} supabaseClient={supabaseClient} redirectTo={'http://localhost:3000/dashboard'} />
