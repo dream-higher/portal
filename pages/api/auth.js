@@ -1,4 +1,4 @@
-import supabaseClient from '../../utils/client'
+import supabaseClient from '@utils/client'
 
 export default function handler(req, res) {
 	console.log(req.body)

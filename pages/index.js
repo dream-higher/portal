@@ -1,35 +1,35 @@
-import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { Auth } from '@supabase/ui'
 import supabaseClient from '@utils/client'
-import signIn from '@utils/signIn'
+// import { useEffect } from 'react'
+// import signIn from '@utils/signIn'
+
+const Container = (props) => {
+	const router = useRouter()
+
+	const { user } = Auth.useUser()
+	if (user)
+		return (
+			<>
+				<p>Signed in: {user.email}</p>
+				<button block onClick={() => props.supabaseClient.auth.signOut()}>
+					Sign out
+				</button>
+			</>
+		)
+	return props.children
+}
 
 export default function Home() {
-	const { user } = Auth.useUser()
-
-	useEffect(() => {
-		const { data: authListener } = supabaseClient.auth.onAuthStateChange((event, session) => {
-			fetch('/api/auth', {
-				method: 'POST',
-				headers: new Headers({ 'Content-Type': 'application/json' }),
-				credentials: 'same-origin',
-				body: JSON.stringify({ event, session }),
-			}).then((res) => res.json())
-		})
-
-		return () => {
-			authListener.unsubscribe()
-		}
-	}, [user])
-
-	console.log(user)
-
 	return (
-		<div className={'flex items-center justify-center absolute top-0 left-0 w-full h-full'}>
-			<Auth.UserContextProvider supabaseClient={supabaseClient}>
-				<button className={'px-5 py-2 font-bold text-black hover:bg-green-500 bg-green-400'} onClick={() => signIn(supabaseClient)}>
-					Log in
-				</button>
-			</Auth.UserContextProvider>
+		<div className={'absolute top-0 left-0 w-full h-full flex items-center justify-center'}>
+			<div className={'w-1/2 h-1/2 flex items-center justify-center flex-col text-center'}>
+				<Auth.UserContextProvider supabaseClient={supabaseClient}>
+					<Container supabaseClient={supabaseClient}>
+						<Auth onlyThirdPartyProviders providers={['google']} supabaseClient={supabaseClient} redirectTo={'http://localhost:3000/dashboard'} />
+					</Container>
+				</Auth.UserContextProvider>
+			</div>
 		</div>
 	)
 }
