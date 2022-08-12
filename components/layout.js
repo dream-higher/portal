@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -31,7 +32,7 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(' ')
 }
 
-export default function LayoutComponent({ children, pageTitle, user }) {
+export default function LayoutComponent({ children, pageTitle, user, pageLinks }) {
 	return (
 		<>
 			<div className='min-h-full'>
@@ -182,8 +183,18 @@ export default function LayoutComponent({ children, pageTitle, user }) {
 						)}
 					</Disclosure>
 					<header className='py-10'>
-						<div className='px-4 mx-auto max-w-7xl sm:px-6 lg:px-8'>
+						<div className='flex justify-between px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 gap-x-3'>
 							<h1 className='text-3xl font-bold text-white'>{pageTitle}</h1>
+							{pageLinks &&
+								pageLinks.map((el) => {
+									return (
+										<Link href={el.href} passHref key={`nav-${el.title}`}>
+											<button className={'text-slate-50 px-3 py-1 flex items-center gap-x-1 justify-center hover:text-slate-300'}>
+												{el.icon} {el.title}
+											</button>
+										</Link>
+									)
+								})}
 						</div>
 					</header>
 				</div>

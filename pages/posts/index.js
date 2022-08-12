@@ -2,6 +2,7 @@ import toast from 'react-hot-toast'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { PlusCircleIcon } from '@heroicons/react/outline'
 
 import { withPageAuth, supabaseClient } from '@supabase/auth-helpers-nextjs'
 
@@ -29,7 +30,7 @@ function AllPosts({ user }) {
 		)
 	if (!posts.length) return <p className='text-2xl'>No posts.</p>
 	return (
-		<LayoutComponent pageTitle={'Posts'} user={user}>
+		<LayoutComponent pageTitle={'Posts'} user={user} pageLinks={[{ title: 'Create post', href: '/posts/create', icon: <PlusCircleIcon className={'w-6 h-6 inline'} /> }]}>
 			<div className={'grid grid-cols-1'}>
 				{posts
 					.sort((a, b) => b.id - a.id)
