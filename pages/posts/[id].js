@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import { motion } from 'framer-motion'
 
 import toast from 'react-hot-toast'
 import { PencilIcon, TrashIcon, ShareIcon, ArrowLeftIcon } from '@heroicons/react/outline'
@@ -61,7 +60,7 @@ export default function Post({ post, user }) {
 				</button>
 			</div>
 			{showDeleteConfirmation && (
-				<motion.div className={'bg-red-100 px-3 py-1 mt-3'}>
+				<div className={'bg-red-100 px-3 py-1 mt-3'}>
 					Do you want to delete this post?{' '}
 					<span className={'font-bold cursor-pointer hover:underline'} onClick={() => deletePost(post.id)}>
 						Yes
@@ -71,14 +70,14 @@ export default function Post({ post, user }) {
 						No
 					</span>
 					, cancel.
-				</motion.div>
+				</div>
 			)}
 			{showShareLink && (
-				<motion.div className={'relative bg-green-100 px-3 py-1 mt-3 h-10'}>
+				<div className={'relative bg-green-100 px-3 py-1 mt-3 h-10'}>
 					<textarea className={'w-full bg-transparent border-none outline-none h-full absolute top-0 left-0 focus:outline-none'}>
 						To do: create and display share link.
 					</textarea>
-				</motion.div>
+				</div>
 			)}
 			<div className='mt-8'>
 				<ReactMarkdown>{post.content}</ReactMarkdown>
