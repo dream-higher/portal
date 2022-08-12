@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { Auth } from '@supabase/ui'
 import { useUser } from '@supabase/auth-helpers-react'
@@ -7,19 +8,10 @@ import { useEffect, useState } from 'react'
 
 const LoginPage = () => {
 	const { user, error } = useUser()
-	const [data, setData] = useState()
 
-	useEffect(() => {
-		async function loadData() {
-			const { data } = await supabaseClient.from('posts').select('*')
-			setData(data)
-			console.log(data)
-		}
-		// Only run query once user is logged in.
-		if (user) loadData()
-	}, [user])
+	const router = useRouter()
 
-	if (!user)
+	if (!user) {
 		return (
 			<div className={'w-full h-full absolute top-0 left-0 flex justify-center items-center'}>
 				<div>
@@ -35,17 +27,11 @@ const LoginPage = () => {
 				</div>
 			</div>
 		)
+	} else {
+		router.push(process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL)
+		return null
+	}
 
-	return (
-		<div className={'w-full h-full absolute top-0 left-0 flex justify-center items-center'}>
-			<div className={'flex flex-col gap-3 justify-center items-center'}>
-				<Link href={'/'} passHref>
-					<button className={'bg-slate-50 rounded-full px-5 py-3 hover:shadow-lg'}>Go to dashboard</button>
-				</Link>
-				<button onClick={() => supabaseClient.auth.signOut()}>Sign out</button>
-			</div>
-		</div>
-	)
 }
 
 export default LoginPage
