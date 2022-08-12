@@ -1,3 +1,13 @@
 @tailwind base;
+
+@layer base {
+	html, body {
+		@apply h-full w-full
+	}
+	.dh-gradient {
+		@apply bg-gradient-to-tl from-orange-600 to-yellow-500 via-yellow-500;
+	}
+}
+
 @tailwind components;
 @tailwind utilities;

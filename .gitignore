@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/credentials
+/certificates
 
 # next.js
 /.next/

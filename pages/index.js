@@ -1,35 +1,27 @@
-import { useRouter } from 'next/router'
-import { Auth } from '@supabase/ui'
-import supabaseClient from '@utils/client'
-// import { useEffect } from 'react'
-// import signIn from '@utils/signIn'
+import { useEffect, useState } from 'react'
 
-const Container = (props) => {
-	const router = useRouter()
+import { supabaseClient } from '@supabase/auth-helpers-nextjs'
+import { withPageAuth } from '@supabase/auth-helpers-nextjs'
+import LayoutComponent from '@components/layout'
 
-	const { user } = Auth.useUser()
-	if (user)
-		return (
-			<>
-				<p>Signed in: {user.email}</p>
-				<button block onClick={() => props.supabaseClient.auth.signOut()}>
-					Sign out
-				</button>
-			</>
-		)
-	return props.children
-}
+export default function Dashboard({ user }) {
+	const [data, setData] = useState()
 
-export default function Home() {
+	useEffect(() => {
+		async function loadData() {
+			const { data } = await supabaseClient.from('posts').select('*')
+			setData(data)
+			console.log(data)
+		}
+		// Only run query once user is logged in.
+		if (user) loadData()
+	}, [user])
+
 	return (
-		<div className={'absolute top-0 left-0 w-full h-full flex items-center justify-center'}>
-			<div className={'w-full h-full max-w-xs flex items-center justify-center flex-col text-center'}>
-				<Auth.UserContextProvider supabaseClient={supabaseClient}>
-					<Container supabaseClient={supabaseClient}>
-						<Auth onlyThirdPartyProviders providers={['google']} supabaseClient={supabaseClient} redirectTo={'http://localhost:3000/dashboard'} />
-					</Container>
-				</Auth.UserContextProvider>
-			</div>
-		</div>
+		<LayoutComponent pageTitle={'Dashboard'} user={user}>
+			<div>Hello {user.email}</div>
+		</LayoutComponent>
 	)
 }
+
+export const getServerSideProps = withPageAuth({ redirectTo: '/login' })

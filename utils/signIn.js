@@ -1,6 +1,7 @@
 export default async function signIn(supabaseClient) {
 	const env = process.env.NODE_ENV || 'development'
-	const redirectURL = env === 'development' ? 'http://localhost:3000/dashboard' : 'https://dreamhigher.vercel.app/dashboard'
+	console.log(env)
+	const redirectURL = env === 'development' ? 'https://localhost:3000/dashboard' : 'https://dreamhigher.vercel.app/dashboard'
 
 	console.log(redirectURL)
 
