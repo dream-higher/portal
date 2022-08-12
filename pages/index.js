@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import { withPageAuth } from '@supabase/auth-helpers-nextjs'
+
 import LayoutComponent from '@components/layout'
 
 export default function Dashboard({ user }) {

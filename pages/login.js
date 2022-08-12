@@ -1,10 +1,8 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { Auth } from '@supabase/ui'
 import { useUser } from '@supabase/auth-helpers-react'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
-import { useEffect, useState } from 'react'
 
 const LoginPage = () => {
 	const { user, error } = useUser()
@@ -31,7 +29,6 @@ const LoginPage = () => {
 		router.push(process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL)
 		return null
 	}
-
 }
 
 export default LoginPage

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { MenuIcon, XIcon } from '@heroicons/react/outline'
 
 // const user = {
 // 	name: 'Tom Cook',
@@ -81,7 +81,7 @@ export default function LayoutComponent({ children, pageTitle, user }) {
 															<Menu.Button className='flex items-center max-w-xs text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
 																<span className='sr-only'>Open user menu</span>
 																<span className={'relative block w-10 h-10'}>
-																	<Image layout={'fill'} className={'w-full h-full absolute top-0 left-0 rounded-full'} src={user.user_metadata.picture} alt='' />
+																	<Image layout={'fill'} className={'w-full h-full absolute top-0 left-0 rounded-full'} src={user?.user_metadata.picture} alt='' />
 																</span>
 															</Menu.Button>
 														</div>
@@ -144,11 +144,11 @@ export default function LayoutComponent({ children, pageTitle, user }) {
 									<div className='pt-4 pb-3 border-t border-gray-700'>
 										{/* <div className='flex items-center px-5'>
 											<div className='relative w-10 h-10 flex-shrink-1'>
-												<Image layout={'fill'} className='rounded-full' src={user.imageUrl} alt='' />
+												<Image layout={'fill'} className='rounded-full' src={user?.imageUrl} alt='' />
 											</div>
 											<div className='ml-3'>
-												<div className='text-base font-medium leading-none text-white'>{user.name}</div>
-												<div className='text-sm font-medium leading-none text-gray-400'>{user.email}</div>
+												<div className='text-base font-medium leading-none text-white'>{user?.name}</div>
+												<div className='text-sm font-medium leading-none text-gray-400'>{user?.email}</div>
 											</div>
 											<button
 												type='button'
