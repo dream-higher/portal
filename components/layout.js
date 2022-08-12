@@ -17,6 +17,7 @@ const navigation = [
 	{ name: 'Dashboard', href: '/', current: true },
 	{ name: 'Calendar', href: '/calendar', current: false },
 	{ name: 'Team', href: '/team', current: false },
+	{ name: 'Posts', href: '/posts', current: false },
 	// { name: 'Projects', href: '/projects', current: false },
 	// { name: 'Reports', href: '#', current: false },
 ]
@@ -81,7 +82,12 @@ export default function LayoutComponent({ children, pageTitle, user }) {
 															<Menu.Button className='flex items-center max-w-xs text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
 																<span className='sr-only'>Open user menu</span>
 																<span className={'relative block w-10 h-10'}>
-																	<Image layout={'fill'} className={'w-full h-full absolute top-0 left-0 rounded-full'} src={user?.user_metadata.picture} alt='' />
+																	<Image
+																		layout={'fill'}
+																		className={'w-full h-full absolute top-0 left-0 rounded-full'}
+																		src={user?.user_metadata.picture}
+																		alt=''
+																	/>
 																</span>
 															</Menu.Button>
 														</div>

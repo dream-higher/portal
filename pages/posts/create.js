@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast'
+
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
@@ -22,24 +24,26 @@ function CreatePost({ user }) {
 	}
 
 	async function createNewPost() {
-		if (!title || !content) return
+		if (!title || !content) {
+			toast.error('Fill out title and content.')
+			return
+		}
 		const id = uuid()
 		post.id = id
 
-		const { data } = await supabaseClient.from('posts')
+		const loadingToast = toast.loading('Saving...')
+
+		await supabaseClient
+			.from('posts')
 			.insert([{ title, content, user_id: user.id, user_email: user.email }])
 			.single()
-
-		console.group('Data available?')
-		console.log('User ID: ' + user.id)
-		console.log(post)
-		console.log(data)
-		console.groupEnd()
-
-		// if (data) {
-		// 	router.push(`/posts/${data.id}`)
-		// }
+			.then((data) => {
+				toast.dismiss(loadingToast)
+				toast.success(`Post ${data.data.id} saved.`)
+				router.push(`/posts/${data.data.id}`)
+			})
 	}
+
 	return (
 		<LayoutComponent pageTitle={'Create new post'} user={user}>
 			<input
@@ -50,7 +54,7 @@ function CreatePost({ user }) {
 				className='w-full px-2 pb-2 my-4 text-lg font-bold text-gray-800 placeholder-gray-500 border-b-2 border-slate-200 focus:outline-none y-2'
 			/>
 			<SimpleMDE value={post.content} onChange={(value) => setPost({ ...post, content: value })} />
-			<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={createNewPost}>
+			<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={() => createNewPost()}>
 				Create Post
 			</button>
 		</LayoutComponent>
