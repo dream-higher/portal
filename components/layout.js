@@ -17,6 +17,7 @@ import { MenuIcon, XIcon } from '@heroicons/react/outline'
 const navigation = [
 	{ name: 'Dashboard', href: '/', current: true },
 	{ name: 'Calendar', href: '/calendar', current: false },
+	{ name: 'Events', href: '/events', current: false },
 	{ name: 'Team', href: '/team', current: false },
 	{ name: 'Posts', href: '/posts', current: false },
 	// { name: 'Projects', href: '/projects', current: false },

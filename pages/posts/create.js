@@ -55,7 +55,7 @@ function CreatePost({ user }) {
 			/>
 			<SimpleMDE value={post.content} onChange={(value) => setPost({ ...post, content: value })} />
 			<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={() => createNewPost()}>
-				Create Post
+				Create post
 			</button>
 		</LayoutComponent>
 	)
