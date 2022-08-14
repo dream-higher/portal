@@ -1,37 +1,31 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import DatePicker from 'react-datepicker'
+import { useState, useEffect } from 'react'
+import { set, useForm } from 'react-hook-form'
+import ReactSearchBox from 'react-search-box'
+import { TrashIcon } from '@heroicons/react/outline'
 
-const DatePickerComponent = ({ showTimeSelect, dateFormat, showTimeSelectOnly }) => {
-	const [startDate, setStartDate] = useState(new Date())
-	const DateTimeInput = ({ date, value, onChange }) => <input value={value} onChange={(e) => onChange(e.target.value)} />
+export default function EventForm({ onChangeHandler, coaches }) {
+	const [additionalCoaches, setAdditionalCoaches] = useState([])
 
-	return (
-		<DatePicker
-			selected={startDate}
-			onChange={(date) => setStartDate(date)}
-			showTimeSelect={showTimeSelect}
-			showTimeSelectOnly={showTimeSelectOnly}
-			timeFormat='p'
-			timeIntervals={15}
-			month
-			dateFormat={dateFormat || 'Pp'}
-			customTimeInput={<DateTimeInput />}
-		/>
-	)
-}
-
-export default function EventForm({ onChangeHandler }) {
 	const {
 		register,
 		handleSubmit,
 		watch,
-		formState: { errors },
+		setValue,
+		formState: { errors, isDirty, dirtyFields },
 	} = useForm()
 
 	const onSubmit = (data) => console.log(data)
 
-	const watchMultipleDays = watch('multipleDays', false)
+	const watchAdditionalCoaches = watch('additionalCoaches')
+
+	useEffect(() => {
+		const watchAllFields = watch((value) => onChangeHandler(value))
+		return () => watchAllFields.unsubscribe()
+	}, [watch, onChangeHandler])
+
+	useEffect(() => {
+		setValue('additionalCoaches', additionalCoaches)
+	}, [setValue, additionalCoaches])
 
 	return (
 		<form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
@@ -60,7 +54,6 @@ export default function EventForm({ onChangeHandler }) {
 								{errors.title && <p className={'text-red-500 pt-2'}>Please enter a valid title for this event.</p>}
 							</div>
 						</div>
-
 						<div>
 							<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
 								Description / notes
@@ -77,92 +70,65 @@ export default function EventForm({ onChangeHandler }) {
 								/>
 							</div>
 						</div>
-
-						<div className='mt-8 space-y-4'>
-							<div className='flex items-start'>
-								<div className='flex items-center h-5'>
+						<div className={'grid grid-cols-2 sm:grid-cols-4 gap-3'}>
+							<div>
+								<label htmlFor='startDate' className='block text-sm font-medium text-gray-700'>
+									Start date
+								</label>
+								<div className='mt-1'>
 									<input
-										id='fullDay'
-										name='fullDay'
-										{...register('fullDay')}
-										type='checkbox'
-										className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500'
+										className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+										type={'date'}
+										{...register('startDate')}
+										name={'startDate'}
+										title={'startDate'}
 									/>
-								</div>
-								<div className='ml-3 text-sm'>
-									<label htmlFor='fullDay' className='font-medium text-gray-700'>
-										Full day event
-									</label>
-									<p className='text-gray-500'>Save the event as a full day event.</p>
 								</div>
 							</div>
-							<div className='flex items-start'>
-								<div className='flex items-center h-5'>
+							<div>
+								<label htmlFor='startTime' className='block text-sm font-medium text-gray-700'>
+									Start time
+								</label>
+								<div className='mt-1'>
 									<input
-										id='multipleDays'
-										name='multipleDays'
-										{...register('multipleDays')}
-										type='checkbox'
-										className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500'
+										className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+										type={'time'}
+										{...register('startTime')}
+										name={'startTime'}
+										title={'startTime'}
 									/>
 								</div>
-								<div className='ml-3 text-sm'>
-									<label htmlFor='multipleDays' className='font-medium text-gray-700'>
-										Multiple day event
-									</label>
-									<p className='text-gray-500'>Event does not start and end on the same day.</p>
+							</div>
+
+							<div>
+								<label htmlFor='endDate' className='block text-sm font-medium text-gray-700'>
+									End date
+								</label>
+								<div className='mt-1'>
+									<input
+										className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+										type={'date'}
+										{...register('endDate')}
+										name={'endDate'}
+										title={'endDate'}
+									/>
+								</div>
+							</div>
+							<div>
+								<label htmlFor='endTime' className='block text-sm font-medium text-gray-700'>
+									End time
+								</label>
+								<div className='mt-1'>
+									<input
+										className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+										type={'time'}
+										{...register('endTime')}
+										name={'endTime'}
+										title={'endTime'}
+									/>
 								</div>
 							</div>
 						</div>
-
-						{watchMultipleDays ? (
-							<div className={'grid grid-cols-1 sm:grid-cols-2'}>
-								<div>
-									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-										From
-									</label>
-									<div className='mt-1'>
-										<DatePickerComponent showTimeSelect={true} />
-									</div>
-								</div>
-
-								<div>
-									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-										To
-									</label>
-									<div className='mt-1'>
-										<DatePickerComponent showTimeSelect={true} />
-									</div>
-								</div>
-							</div>
-						) : (
-							<div className={'grid grid-cols-1 sm:grid-cols-3'}>
-								<div>
-									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-										Date
-									</label>
-									<div className='mt-1'>
-										<DatePickerComponent showTimeSelect={false} />
-									</div>
-								</div>
-								<div>
-									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-										Start time
-									</label>
-									<div className='mt-1'>
-										<DatePickerComponent showTimeSelect={true} dateFormat={'p'} showTimeSelectOnly />
-									</div>
-								</div>
-								<div>
-									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-										End time
-									</label>
-									<div className='mt-1'>
-										<DatePickerComponent showTimeSelect={true} dateFormat={'p'} showTimeSelectOnly />
-									</div>
-								</div>
-							</div>
-						)}
 					</div>
 				</div>
 			</div>
@@ -173,32 +139,61 @@ export default function EventForm({ onChangeHandler }) {
 						<h3 className='text-lg font-medium leading-6 text-gray-900'>People</h3>
 						<p className='mt-1 text-sm text-gray-500'>Add coaches and participants to this event.</p>
 					</div>
+
 					<div className='mt-5 md:mt-0 md:col-span-2'>
 						<div className='grid grid-cols-6 gap-6'>
-							<div className='col-span-6 sm:col-span-3'>
-								<label htmlFor='first-name' className='block text-sm font-medium text-gray-700'>
-									First name
+							<div className='col-span-6 sm:col-span-4'>
+								<label htmlFor='mainCoachId' className='block text-sm font-medium text-gray-700'>
+									Main coach / event leader
 								</label>
-								<input
-									type='text'
-									name='first-name'
-									id='first-name'
-									autoComplete='given-name'
-									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
-								/>
+								<select
+									id='mainCoachId'
+									name='mainCoachId'
+									{...register('mainCoachId')}
+									className='block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+									defaultValue='Jethro Watson'
+								>
+									<option value={0}>Jethro Watson</option>
+									<option value={1}>Marc Fehr</option>
+									<option value={2}>Zoe Duby</option>
+								</select>
 							</div>
 
 							<div className='col-span-6 sm:col-span-3'>
 								<label htmlFor='last-name' className='block text-sm font-medium text-gray-700'>
-									Last name
+									Additional coaches (add)
 								</label>
-								<input
-									type='text'
-									name='last-name'
-									id='last-name'
-									autoComplete='family-name'
-									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
-								/>
+								<div className={'mt-1 input-box'}>
+									<ReactSearchBox
+										placeholder='Search for John, Jane or Mary'
+										data={coaches}
+										onSelect={(record) => {
+											setAdditionalCoaches((old) => [...old, record])
+										}}
+										onFocus={() => {
+											// Todo: Load new coaches from Supabase DB?
+											console.log('This function is called when is focussed')
+										}}
+										// onChange={(value) => console.log(value)}
+										inputBorderColor={'rgb(209 213 219)'}
+										leftIcon={<>🧗</>}
+										iconBoxSize='48px'
+										clearOnSelect
+									/>
+								</div>
+								{watchAdditionalCoaches?.length > 0 && (
+									<ul className={'flex flex-col gap-y-2 my-2'}>
+										{watchAdditionalCoaches.map((coach) => (
+											<li key={coach.item.key} className='flex items-center'>
+												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} />
+												<div className='ml-2'>
+													<p className='text-sm font-medium text-gray-900'>{coach.item.value}</p>
+													<p className='text-sm text-gray-500'>ID: {coach.item.key}</p>
+												</div>
+											</li>
+										))}
+									</ul>
+								)}
 							</div>
 
 							<div className='col-span-6 sm:col-span-4'>
@@ -372,7 +367,7 @@ export default function EventForm({ onChangeHandler }) {
 				</div>
 			</div>
 
-			<div className='flex justify-end'>
+			{/* <div className='flex justify-end'>
 				<button
 					type='button'
 					className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500'
@@ -385,7 +380,7 @@ export default function EventForm({ onChangeHandler }) {
 				>
 					Save
 				</button>
-			</div>
+			</div> */}
 		</form>
 	)
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { withPageAuth, supabaseClient } from '@supabase/auth-helpers-nextjs'
 import toast from 'react-hot-toast'
@@ -8,28 +8,59 @@ import EventForm from '@components/forms/createEvent'
 
 const initialState = {
 	title: '',
-	content: '',
+	description: '',
 	startDate: '',
 	startTime: '',
 	endDate: '',
 	endTime: '',
-	isFullDay: false,
-	isMultipleDay: false,
 	participants: [],
-	coaches: [],
+	mainCoachId: '',
+	additionalCoaches: [],
 	location: [],
 	categories: [],
 }
 
+// Todo: Fetch all coaches from Supabase DB first
+const allCoaches = [
+	{
+		key: 0,
+		value: 'John Doe',
+	},
+	{
+		key: 1,
+		value: 'Jane Doe',
+	},
+	{
+		key: 2,
+		value: 'Mary Phillips',
+	},
+	{
+		key: 3,
+		value: 'Robert',
+	},
+	{
+		key: 4,
+		value: 'Karius',
+	},
+]
+
 function CreateEvent({ user }) {
 	const [event, setEvent] = useState(initialState)
-	const { title, content, startDate, startTime, endDate, endTime, isFullDay, isMultipleDay, participants, coaches, location, categories } = event
+	const { title, content, startDate, startTime, endDate, endTime, isFullDay, isMultipleDay, participants, additionalCoaches, location, categories } = event
+
+	console.log(event.coaches)
 
 	const router = useRouter()
 
-	function onChange(e) {
-		setEvent(() => ({ ...event, [e.target.name]: e.target.value }))
+	function onChange(data) {
+		setEvent(() => ({ ...event, ...data }))
 	}
+
+	useEffect(() => {
+		console.group('Event logging')
+		console.table(event)
+		console.groupEnd()
+	}, [event])
 
 	async function createNewEvent() {
 		if (!title || !content) {
@@ -58,11 +89,11 @@ function CreateEvent({ user }) {
 
 		const googleToast = toast.loading('Saving to Google Calendar.')
 
-    // To do: Save / sync event with Google Calendar API
-    toast.dismiss(googleToast)
+		// To do: Save / sync event with Google Calendar API
+		toast.dismiss(googleToast)
 
-    // Once done, save / sync event to Supabase:
-    const supabaseToast = toast.loading('Saving to database.')
+		// Once done, save / sync event to Supabase:
+		const supabaseToast = toast.loading('Saving to database.')
 		await supabaseClient
 			.from('events')
 			.insert([
@@ -91,12 +122,17 @@ function CreateEvent({ user }) {
 			})
 	}
 
+	console.log(allCoaches)
+	console.log(additionalCoaches)
+
 	return (
 		<LayoutComponent pageTitle={'Create new event'} user={user}>
-      <EventForm />
-			<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={() => createNewEvent()}>
-				Create event
-			</button>
+			<EventForm onChangeHandler={onChange} coaches={allCoaches.filter((item) => !additionalCoaches.map((el) => el.item).includes(item))} />
+			<div className={'flex justify-center mt-3'}>
+				<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={() => createNewEvent()}>
+					Create event
+				</button>
+			</div>
 		</LayoutComponent>
 	)
 }
