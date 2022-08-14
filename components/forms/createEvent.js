@@ -1,25 +1,40 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import DatePicker from 'react-datepicker'
 
-const DatePickerComponent = () => {
+const DatePickerComponent = ({ showTimeSelect, dateFormat, showTimeSelectOnly }) => {
 	const [startDate, setStartDate] = useState(new Date())
 	const DateTimeInput = ({ date, value, onChange }) => <input value={value} onChange={(e) => onChange(e.target.value)} />
+
 	return (
 		<DatePicker
 			selected={startDate}
 			onChange={(date) => setStartDate(date)}
-			showTimeSelect
+			showTimeSelect={showTimeSelect}
+			showTimeSelectOnly={showTimeSelectOnly}
 			timeFormat='p'
 			timeIntervals={15}
-			dateFormat='Pp'
+			month
+			dateFormat={dateFormat || 'Pp'}
 			customTimeInput={<DateTimeInput />}
 		/>
 	)
 }
 
 export default function EventForm({ onChangeHandler }) {
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors },
+	} = useForm()
+
+	const onSubmit = (data) => console.log(data)
+
+	const watchMultipleDays = watch('multipleDays', false)
+
 	return (
-		<form className='space-y-6' action='#' method='POST'>
+		<form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
 			<div className='py-3 bg-transparent sm:rounded-lg'>
 				<div className='md:grid md:grid-cols-3 md:gap-6'>
 					<div className='md:col-span-1'>
@@ -29,20 +44,20 @@ export default function EventForm({ onChangeHandler }) {
 
 					<div className='mt-5 space-y-6 md:mt-0 md:col-span-2'>
 						<div className='grid grid-cols-3 gap-6'>
-							<div className='col-span-3 sm:col-span-2'>
+							<div className='col-span-3 sm:col-span-3'>
 								<label htmlFor='company-website' className='block text-sm font-medium text-gray-700'>
-									Title
+									Event title
 								</label>
 								<div className='flex mt-1'>
 									{/* <span className='inline-flex items-center px-3 text-sm text-gray-500 border border-r-0 border-gray-300 rounded-l-md bg-gray-50'>http://</span> */}
 									<input
-										onChange={onChangeHandler}
 										name='title'
-										// placeholder='Title'
-										// value={event.title}
+										{...register('title', { required: true })}
 										className='w-full px-3 py-2 text-xl font-semibold border border-gray-300 rounded-md focus:outline-none'
+										placeholder={'Title'}
 									/>
 								</div>
+								{errors.title && <p className={'text-red-500 pt-2'}>Please enter a valid title for this event.</p>}
 							</div>
 						</div>
 
@@ -54,9 +69,10 @@ export default function EventForm({ onChangeHandler }) {
 								<textarea
 									id='about'
 									name='about'
+									{...register('description')}
 									rows={5}
 									className='block w-full border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
-									placeholder='you@example.com'
+									placeholder='What is this event about?'
 									defaultValue={''}
 								/>
 							</div>
@@ -65,21 +81,33 @@ export default function EventForm({ onChangeHandler }) {
 						<div className='mt-8 space-y-4'>
 							<div className='flex items-start'>
 								<div className='flex items-center h-5'>
-									<input id='comments' name='comments' type='checkbox' className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500' />
+									<input
+										id='fullDay'
+										name='fullDay'
+										{...register('fullDay')}
+										type='checkbox'
+										className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500'
+									/>
 								</div>
 								<div className='ml-3 text-sm'>
-									<label htmlFor='comments' className='font-medium text-gray-700'>
+									<label htmlFor='fullDay' className='font-medium text-gray-700'>
 										Full day event
 									</label>
-									<p className='text-gray-500'>Save event without time settings.</p>
+									<p className='text-gray-500'>Save the event as a full day event.</p>
 								</div>
 							</div>
 							<div className='flex items-start'>
 								<div className='flex items-center h-5'>
-									<input id='comments' name='comments' type='checkbox' className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500' />
+									<input
+										id='multipleDays'
+										name='multipleDays'
+										{...register('multipleDays')}
+										type='checkbox'
+										className='w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500'
+									/>
 								</div>
 								<div className='ml-3 text-sm'>
-									<label htmlFor='comments' className='font-medium text-gray-700'>
+									<label htmlFor='multipleDays' className='font-medium text-gray-700'>
 										Multiple day event
 									</label>
 									<p className='text-gray-500'>Event does not start and end on the same day.</p>
@@ -87,27 +115,54 @@ export default function EventForm({ onChangeHandler }) {
 							</div>
 						</div>
 
-						<div className={'grid grid-cols-2'}>
+						{watchMultipleDays ? (
+							<div className={'grid grid-cols-1 sm:grid-cols-2'}>
+								<div>
+									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
+										From
+									</label>
+									<div className='mt-1'>
+										<DatePickerComponent showTimeSelect={true} />
+									</div>
+								</div>
 
-							<div>
-								<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-									From
-								</label>
-								<div className='mt-1'>
-									<DatePickerComponent />
+								<div>
+									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
+										To
+									</label>
+									<div className='mt-1'>
+										<DatePickerComponent showTimeSelect={true} />
+									</div>
 								</div>
 							</div>
-
-							<div>
-								<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
-									To
-								</label>
-								<div className='mt-1'>
-									<DatePickerComponent />
+						) : (
+							<div className={'grid grid-cols-1 sm:grid-cols-3'}>
+								<div>
+									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
+										Date
+									</label>
+									<div className='mt-1'>
+										<DatePickerComponent showTimeSelect={false} />
+									</div>
+								</div>
+								<div>
+									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
+										Start time
+									</label>
+									<div className='mt-1'>
+										<DatePickerComponent showTimeSelect={true} dateFormat={'p'} showTimeSelectOnly />
+									</div>
+								</div>
+								<div>
+									<label htmlFor='about' className='block text-sm font-medium text-gray-700'>
+										End time
+									</label>
+									<div className='mt-1'>
+										<DatePickerComponent showTimeSelect={true} dateFormat={'p'} showTimeSelectOnly />
+									</div>
 								</div>
 							</div>
-							
-						</div>
+						)}
 					</div>
 				</div>
 			</div>

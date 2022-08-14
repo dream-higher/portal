@@ -18,6 +18,8 @@ a {
 	border-radius: 30px;
 }
 
+/* React Date Picker */
+
 .react-datepicker__time-list-item.react-datepicker__time-list-item--selected,
 .react-datepicker__day--selected {
 	background-color: #db6b2d !important;
