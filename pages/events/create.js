@@ -13,15 +13,44 @@ const initialState = {
 	startTime: '',
 	endDate: '',
 	endTime: '',
+	email: '',
 	participants: [],
 	mainCoachId: '',
 	additionalCoaches: [],
 	location: [],
 	categories: [],
+	street: '',
+	city: '',
+	state: '',
+	zip: '',
 }
 
-// Todo: Fetch all coaches from Supabase DB first
+// Todo: Fetch all COACHES from Supabase DB first
 const allCoaches = [
+	{
+		key: 0,
+		value: 'John Doe',
+	},
+	{
+		key: 1,
+		value: 'Jane Doe',
+	},
+	{
+		key: 2,
+		value: 'Mary Phillips',
+	},
+	{
+		key: 3,
+		value: 'Robert',
+	},
+	{
+		key: 4,
+		value: 'Karius',
+	},
+]
+
+// Todo: Fetch all MEMBERS from Supabase DB first
+const allMembers = [
 	{
 		key: 0,
 		value: 'John Doe',
@@ -46,9 +75,22 @@ const allCoaches = [
 
 function CreateEvent({ user }) {
 	const [event, setEvent] = useState(initialState)
-	const { title, content, startDate, startTime, endDate, endTime, isFullDay, isMultipleDay, participants, additionalCoaches, location, categories } = event
-
-	console.log(event.coaches)
+	const {
+		title,
+		content,
+		startDate,
+		startTime,
+		endDate,
+		endTime,
+		isFullDay,
+		isMultipleDay,
+		participants,
+		additionalCoaches,
+		location,
+		categories,
+		email,
+		street,
+	} = event
 
 	const router = useRouter()
 
@@ -122,14 +164,12 @@ function CreateEvent({ user }) {
 			})
 	}
 
-	console.log(allCoaches)
-	console.log(additionalCoaches.map((el) => el.item))
-	const coachesArray = additionalCoaches.map((el) => el.item)
-	console.log(allCoaches.filter((el) => !coachesArray.includes(el)))
+	let leftoverCoaches = allCoaches.filter((o1) => !additionalCoaches.some((o2) => o1.key === o2.item.key))
+	let leftoverMembers = allMembers.filter((o1) => !participants.some((o2) => o1.key === o2.item.key))
 
 	return (
 		<LayoutComponent pageTitle={'Create new event'} user={user}>
-			<EventForm onChangeHandler={onChange} coaches={allCoaches.filter((item) => !additionalCoaches.map((el) => el.item).includes(item))} />
+			<EventForm onChangeHandler={onChange} coaches={leftoverCoaches} members={leftoverMembers} />
 			<div className={'flex justify-center mt-3'}>
 				<button type='button' className='px-8 py-2 mb-4 font-semibold text-white bg-green-600 rounded-lg' onClick={() => createNewEvent()}>
 					Create event

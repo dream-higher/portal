@@ -3,8 +3,9 @@ import { set, useForm } from 'react-hook-form'
 import ReactSearchBox from 'react-search-box'
 import { TrashIcon } from '@heroicons/react/outline'
 
-export default function EventForm({ onChangeHandler, coaches }) {
+export default function EventForm({ onChangeHandler, coaches, members }) {
 	const [additionalCoaches, setAdditionalCoaches] = useState([])
+	const [participants, setParticipants] = useState([])
 
 	const {
 		register,
@@ -17,6 +18,7 @@ export default function EventForm({ onChangeHandler, coaches }) {
 	const onSubmit = (data) => console.log(data)
 
 	const watchAdditionalCoaches = watch('additionalCoaches')
+	const watchParticipants = watch('participants')
 
 	useEffect(() => {
 		const watchAllFields = watch((value) => onChangeHandler(value))
@@ -26,6 +28,20 @@ export default function EventForm({ onChangeHandler, coaches }) {
 	useEffect(() => {
 		setValue('additionalCoaches', additionalCoaches)
 	}, [setValue, additionalCoaches])
+
+	useEffect(() => {
+		setValue('participants', participants)
+	}, [setValue, participants])
+
+	const removeCoach = (key) => {
+		console.log('Removing coach ' + key)
+		setAdditionalCoaches((old) => [...old].filter((el) => el.item.key !== key))
+	}
+
+	const removeParticipant = (key) => {
+		console.log('Removing participant ' + key)
+		setParticipants((old) => [...old].filter((el) => el.item.key !== key))
+	}
 
 	return (
 		<form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
@@ -136,8 +152,8 @@ export default function EventForm({ onChangeHandler, coaches }) {
 			<div className='py-8 bg-white border-t-2'>
 				<div className='md:grid md:grid-cols-3 md:gap-6'>
 					<div className='md:col-span-1'>
-						<h3 className='text-lg font-medium leading-6 text-gray-900'>People</h3>
-						<p className='mt-1 text-sm text-gray-500'>Add coaches and participants to this event.</p>
+						<h3 className='text-lg font-medium leading-6 text-gray-900'>People and place</h3>
+						<p className='mt-1 text-sm text-gray-500'>Add coaches and participants to this event and set the event location.</p>
 					</div>
 
 					<div className='mt-5 md:mt-0 md:col-span-2'>
@@ -182,10 +198,10 @@ export default function EventForm({ onChangeHandler, coaches }) {
 									/>
 								</div>
 								{watchAdditionalCoaches?.length > 0 && (
-									<ul className={'flex flex-col gap-y-2 my-2'}>
+									<ul className={'flex flex-col gap-y-2 pt-2'}>
 										{watchAdditionalCoaches.map((coach) => (
 											<li key={coach.item.key} className='flex items-center'>
-												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} />
+												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} onClick={() => removeCoach(coach.item.key)} />
 												<div className='ml-2'>
 													<p className='text-sm font-medium text-gray-900'>{coach.item.value}</p>
 													<p className='text-sm text-gray-500'>ID: {coach.item.key}</p>
@@ -196,14 +212,52 @@ export default function EventForm({ onChangeHandler, coaches }) {
 								)}
 							</div>
 
+							<div className='col-span-6 sm:col-span-3'>
+								<label htmlFor='last-name' className='block text-sm font-medium text-gray-700'>
+									Participants (add)
+								</label>
+								<div className={'mt-1 input-box'}>
+									<ReactSearchBox
+										placeholder='Search for John, Jane or Mary'
+										data={members}
+										onSelect={(record) => {
+											setParticipants((old) => [...old, record])
+										}}
+										onFocus={() => {
+											// Todo: Load new coaches from Supabase DB?
+											console.log('This function is called when is focussed')
+										}}
+										// onChange={(value) => console.log(value)}
+										inputBorderColor={'rgb(209 213 219)'}
+										leftIcon={<>🧗</>}
+										iconBoxSize='48px'
+										clearOnSelect
+									/>
+								</div>
+								{watchParticipants?.length > 0 && (
+									<ul className={'flex flex-col gap-y-2 pt-2'}>
+										{watchParticipants.map((participant) => (
+											<li key={participant.item.key} className='flex items-center'>
+												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} onClick={() => removeParticipant(participant.item.key)} />
+												<div className='ml-2'>
+													<p className='text-sm font-medium text-gray-900'>{participant.item.value}</p>
+													<p className='text-sm text-gray-500'>ID: {participant.item.key}</p>
+												</div>
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
+
 							<div className='col-span-6 sm:col-span-4'>
 								<label htmlFor='email-address' className='block text-sm font-medium text-gray-700'>
-									Email address
+									Email address for queries
 								</label>
 								<input
 									type='text'
-									name='email-address'
-									id='email-address'
+									name='email'
+									{...register('email')}
+									id='email'
 									autoComplete='email'
 									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 								/>
@@ -219,9 +273,7 @@ export default function EventForm({ onChangeHandler, coaches }) {
 									autoComplete='country-name'
 									className='block w-full px-3 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 								>
-									<option>United States</option>
-									<option>Canada</option>
-									<option>Mexico</option>
+									<option value={0}>South Africa</option>
 								</select>
 							</div>
 
@@ -231,8 +283,9 @@ export default function EventForm({ onChangeHandler, coaches }) {
 								</label>
 								<input
 									type='text'
-									name='street-address'
-									id='street-address'
+									name='street'
+									{...register('street')}
+									id='street'
 									autoComplete='street-address'
 									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 								/>
@@ -245,6 +298,7 @@ export default function EventForm({ onChangeHandler, coaches }) {
 								<input
 									type='text'
 									name='city'
+									{...register('city')}
 									id='city'
 									autoComplete='address-level2'
 									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
@@ -259,6 +313,7 @@ export default function EventForm({ onChangeHandler, coaches }) {
 									type='text'
 									name='region'
 									id='region'
+									{...register('state')}
 									autoComplete='address-level1'
 									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 								/>
@@ -271,6 +326,7 @@ export default function EventForm({ onChangeHandler, coaches }) {
 								<input
 									type='text'
 									name='postal-code'
+									{...register('zip')}
 									id='postal-code'
 									autoComplete='postal-code'
 									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'

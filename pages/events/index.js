@@ -29,7 +29,7 @@ function AllEvents({ user }) {
 				<p>Loading data</p>
 			</LayoutComponent>
 		)
-	if (!events.length) return <p className='text-2xl'>No events.</p>
+	if (!events?.length) return <p className='text-2xl'>No events.</p>
 	return (
 		<LayoutComponent
 			pageTitle={'Events'}
@@ -44,7 +44,7 @@ function AllEvents({ user }) {
 							<div className='cursor-pointer'>
 								<h2 className='text-xl font-semibold'>{event.title}</h2>
 								<p className='mt-2 text-gray-500'>Author: {event.user_email}</p>
-								{i < events.length - 1 && <hr className={'my-5'} />}
+								{i < events?.length - 1 && <hr className={'my-5'} />}
 							</div>
 						</Link>
 					))}
