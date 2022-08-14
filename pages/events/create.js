@@ -123,7 +123,9 @@ function CreateEvent({ user }) {
 	}
 
 	console.log(allCoaches)
-	console.log(additionalCoaches)
+	console.log(additionalCoaches.map((el) => el.item))
+	const coachesArray = additionalCoaches.map((el) => el.item)
+	console.log(allCoaches.filter((el) => !coachesArray.includes(el)))
 
 	return (
 		<LayoutComponent pageTitle={'Create new event'} user={user}>
