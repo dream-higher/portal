@@ -22,7 +22,9 @@ class MyDocument extends Document {
 	render() {
 		return (
 			<Html className={'h-full dh-gradient overflow-hidden'}>
-				<Head />
+				<Head>
+					<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+				</Head>
 				<body className={'h-full overflow-scroll'}>
 					<Main />
 					<NextScript />
