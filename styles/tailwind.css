@@ -6,7 +6,7 @@
 		@apply h-full w-full;
 	}
 	.dh-gradient {
-		@apply bg-gradient-to-tl from-orange-600 to-yellow-500 via-yellow-500;
+		@apply bg-gradient-to-l from-orange-600 to-yellow-500 via-yellow-500;
 	}
 	.input-box input[type='text'] {
 		@apply border-gray-300 text-gray-600 focus:outline-yellow-400;
