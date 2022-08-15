@@ -69,7 +69,7 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data)
-				// users = data
+				users = data
 			})
 			.catch((error) => console.log(error))
 
