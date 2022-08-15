@@ -53,7 +53,7 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 
 	const loadMembers = async () => {
 		// Fetch data from API route
-		const res = await fetch(`https://localhost:3000/api/google/workspace/get-users`)
+		const res = await fetch(`api/google/workspace/get-users`)
 		const { users } = await res.json()
 
 		let membersArray = []
