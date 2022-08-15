@@ -175,6 +175,20 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 								</select>
 							</div>
 
+							<div className='col-span-6 sm:col-span-4'>
+								<label htmlFor='email-address' className='block text-sm font-medium text-gray-700'>
+									Email address for queries
+								</label>
+								<input
+									type='text'
+									name='email'
+									{...register('email')}
+									id='email'
+									autoComplete='email'
+									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
+								/>
+							</div>
+
 							<div className='col-span-6 sm:col-span-3'>
 								<label htmlFor='last-name' className='block text-sm font-medium text-gray-700'>
 									Additional coaches (add)
@@ -247,20 +261,6 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 										))}
 									</ul>
 								)}
-							</div>
-
-							<div className='col-span-6 sm:col-span-4'>
-								<label htmlFor='email-address' className='block text-sm font-medium text-gray-700'>
-									Email address for queries
-								</label>
-								<input
-									type='text'
-									name='email'
-									{...register('email')}
-									id='email'
-									autoComplete='email'
-									className='block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
-								/>
 							</div>
 
 							<div className='col-span-6 sm:col-span-3'>
