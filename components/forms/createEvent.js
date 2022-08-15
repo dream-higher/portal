@@ -53,8 +53,32 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 
 	const loadMembers = async () => {
 		// Fetch data from API route
-		const res = await fetch(`/api/google/workspace/get-users`)
-		const { users } = await res.json()
+		// const res = await fetch(`https://dreamhigher.marcfehr.ch/src/get-users.php`)
+		// const { users } = await res.json()
+
+		let users = []
+
+		// fetch('https://dreamhigher.marcfehr.ch/src/get-users.php', {
+
+		fetch('https://dreamhigher.marcfehr.ch/src/get-users.php', {
+			mode: 'cors',
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data)
+				// users = data
+			})
+			.catch((error) => console.log(error))
+
+		// fetch('http://localhost/get-users.php')
+		// 	.then((data) => data.json())
+		// 	.then((data) => {
+		// 		console.log(data)
+		// 	})
+		// 	.catch(error => console.log(error))
 
 		let membersArray = []
 
@@ -198,10 +222,8 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 									className='block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 									defaultValue='Jethro Watson'
 								>
-									{allMembers.map(member => {
-										return (
-											<option key={`member-${member.key}`}>{member.allProperties.name.fullName}</option>
-										)
+									{allMembers.map((member) => {
+										return <option key={`member-${member.key}`}>{member.allProperties.name.fullName}</option>
 									})}
 								</select>
 							</div>

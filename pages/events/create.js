@@ -25,7 +25,7 @@ const initialState = {
 	zip: '',
 }
 
-function CreateEvent({ user }) {
+function CreateEvent({ user, users }) {
 	const [event, setEvent] = useState(initialState)
 	const {
 		title,
@@ -45,6 +45,8 @@ function CreateEvent({ user }) {
 	} = event
 
 	const router = useRouter()
+
+	console.log(users)
 
 	function onChange(data) {
 		setEvent(() => ({ ...event, ...data }))
@@ -130,4 +132,17 @@ function CreateEvent({ user }) {
 
 export default CreateEvent
 
-export const getServerSideProps = withPageAuth({ redirectTo: '/login' })
+export const getServerSideProps = withPageAuth({
+	redirectTo: '/',
+})
+
+// export const getServerSideProps = withPageAuth({
+// 	redirectTo: '/',
+// 	async getServerSideProps(ctx) {
+// 		// Fetch data from API route
+// 		const res = await fetch(`https://dreamhigher.marcfehr.ch/src/get-users.php`)
+// 		const { users } = await res.json()
+
+// 		return { props: { users: users } }
+// 	},
+// })
