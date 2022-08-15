@@ -6,6 +6,7 @@ import { TrashIcon } from '@heroicons/react/outline'
 export default function EventForm({ onChangeHandler, coaches, members }) {
 	const [additionalCoaches, setAdditionalCoaches] = useState([])
 	const [participants, setParticipants] = useState([])
+	const [allMembers, setAllMembers] = useState([])
 
 	const {
 		register,
@@ -20,10 +21,17 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 	const watchAdditionalCoaches = watch('additionalCoaches')
 	const watchParticipants = watch('participants')
 
+	let leftoverCoaches = allMembers.filter((o1) => !additionalCoaches.some((o2) => o1.key === o2.item.key))
+	let leftoverMembers = allMembers.filter((o1) => !participants.some((o2) => o1.key === o2.item.key))
+
 	useEffect(() => {
 		const watchAllFields = watch((value) => onChangeHandler(value))
 		return () => watchAllFields.unsubscribe()
 	}, [watch, onChangeHandler])
+
+	useEffect(() => {
+		loadMembers()
+	}, [])
 
 	useEffect(() => {
 		setValue('additionalCoaches', additionalCoaches)
@@ -41,6 +49,27 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 	const removeParticipant = (key) => {
 		console.log('Removing participant ' + key)
 		setParticipants((old) => [...old].filter((el) => el.item.key !== key))
+	}
+
+	const loadMembers = async () => {
+		// Fetch data from API route
+		const res = await fetch(`https://localhost:3000/api/google/workspace/get-users`)
+		const { users } = await res.json()
+
+		let membersArray = []
+
+		for (let user of users) {
+			membersArray.push({
+				key: user.id,
+				value: user.name.fullName,
+				allProperties: user,
+			})
+		}
+
+		console.log(membersArray)
+
+		// Set state with all members once fetched
+		setAllMembers(membersArray)
 	}
 
 	return (
@@ -169,9 +198,11 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 									className='block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 rounded-md focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm'
 									defaultValue='Jethro Watson'
 								>
-									<option value={0}>Jethro Watson</option>
-									<option value={1}>Marc Fehr</option>
-									<option value={2}>Zoe Duby</option>
+									{allMembers.map(member => {
+										return (
+											<option key={`member-${member.key}`}>{member.allProperties.name.fullName}</option>
+										)
+									})}
 								</select>
 							</div>
 
@@ -193,23 +224,26 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 								<label htmlFor='last-name' className='block text-sm font-medium text-gray-700'>
 									Additional coaches (add)
 								</label>
-								<div className={'mt-1 input-box'}>
-									<ReactSearchBox
-										placeholder='Search for John, Jane or Mary'
-										data={coaches}
-										onSelect={(record) => {
-											setAdditionalCoaches((old) => [...old, record])
-										}}
-										onFocus={() => {
-											// Todo: Load new coaches from Supabase DB?
-											console.log('This function is called when is focussed')
-										}}
-										// onChange={(value) => console.log(value)}
-										inputBorderColor={'rgb(209 213 219)'}
-										leftIcon={<>🧗</>}
-										iconBoxSize='48px'
-										clearOnSelect
-									/>
+								<div className={`mt-1 input-box ${allMembers.length > 0 ? '' : 'opacity-50 pointer-events-none'}`}>
+									{allMembers.length > 0 && (
+										<ReactSearchBox
+											placeholder='Search for John, Jane or Mary'
+											data={leftoverCoaches}
+											onSelect={(record) => {
+												setAdditionalCoaches((old) => [...old, record])
+											}}
+											onFocus={() => {
+												// Todo: Load new coaches from Supabase DB?
+												loadMembers()
+												console.log('This function is called when is focussed')
+											}}
+											// onChange={(value) => console.log(value)}
+											inputBorderColor={'rgb(209 213 219)'}
+											leftIcon={<>🧗</>}
+											iconBoxSize='48px'
+											clearOnSelect
+										/>
+									)}
 								</div>
 								{watchAdditionalCoaches?.length > 0 && (
 									<ul className={'flex flex-col gap-y-2 pt-2'}>
@@ -218,7 +252,8 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} onClick={() => removeCoach(coach.item.key)} />
 												<div className='ml-2'>
 													<p className='text-sm font-medium text-gray-900'>{coach.item.value}</p>
-													<p className='text-sm text-gray-500'>ID: {coach.item.key}</p>
+													<p className='text-sm text-gray-500'>{coach.item.allProperties.primaryEmail}</p>
+													{/* <p className='text-sm text-gray-500'>ID: {coach.item.key}</p> */}
 												</div>
 											</li>
 										))}
@@ -230,23 +265,25 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 								<label htmlFor='last-name' className='block text-sm font-medium text-gray-700'>
 									Participants (add)
 								</label>
-								<div className={'mt-1 input-box'}>
-									<ReactSearchBox
-										placeholder='Search for John, Jane or Mary'
-										data={members}
-										onSelect={(record) => {
-											setParticipants((old) => [...old, record])
-										}}
-										onFocus={() => {
-											// Todo: Load new coaches from Supabase DB?
-											console.log('This function is called when is focussed')
-										}}
-										// onChange={(value) => console.log(value)}
-										inputBorderColor={'rgb(209 213 219)'}
-										leftIcon={<>🧗</>}
-										iconBoxSize='48px'
-										clearOnSelect
-									/>
+								<div className={`mt-1 input-box ${allMembers.length > 0 ? '' : 'opacity-50 pointer-events-none'}`}>
+									{allMembers.length > 0 && (
+										<ReactSearchBox
+											placeholder='Search for John, Jane or Mary'
+											data={leftoverMembers}
+											onSelect={(record) => {
+												setParticipants((old) => [...old, record])
+											}}
+											onFocus={() => {
+												// Todo: Load new coaches from Supabase DB?
+												console.log('This function is called when is focussed')
+											}}
+											// onChange={(value) => console.log(value)}
+											inputBorderColor={'rgb(209 213 219)'}
+											leftIcon={<>🧗</>}
+											iconBoxSize='48px'
+											clearOnSelect
+										/>
+									)}
 								</div>
 								{watchParticipants?.length > 0 && (
 									<ul className={'flex flex-col gap-y-2 pt-2'}>
@@ -255,7 +292,7 @@ export default function EventForm({ onChangeHandler, coaches, members }) {
 												<TrashIcon className={'w-6 h-6 text-red-500 cursor-pointer'} onClick={() => removeParticipant(participant.item.key)} />
 												<div className='ml-2'>
 													<p className='text-sm font-medium text-gray-900'>{participant.item.value}</p>
-													<p className='text-sm text-gray-500'>ID: {participant.item.key}</p>
+													<p className='text-sm text-gray-500'>{participant.item.allProperties.primaryEmail}</p>
 												</div>
 											</li>
 										))}

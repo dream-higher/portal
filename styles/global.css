@@ -36,8 +36,22 @@ a {
 	margin-top: 10px !important;
 }
 
+.input-box {
+	position: relative;
+}
+
 .input-box input:focus {
 	border-color: rgb(234, 179, 8) !important;
 	outline: rgb(234, 179, 8) !important;
 	box-shadow: none;
+}
+
+.react-search-box-dropdown {
+	position: absolute !important;
+	top: 38px;
+	transform: translateX(-50%);
+	left: 50%;
+	width: 100%;
+	font-size: 1rem;
+	color: rgba(0,0,0,0.8);
 }

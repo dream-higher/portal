@@ -21,6 +21,7 @@
     "@wojtekmaj/react-datetimerange-picker": "^3.5.0",
     "autoprefixer": "^10.4.2",
     "easymde": "^2.16.1",
+    "google-auth-library": "^8.1.1",
     "googleapis": "39",
     "headlessui": "^0.0.0",
     "heroicons": "^1.0.5",
